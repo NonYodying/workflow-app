@@ -1,5 +1,5 @@
 {
-  "name": "budget-client",
+  "name": "workflow-app",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
