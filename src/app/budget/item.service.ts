@@ -1,22 +1,26 @@
+// item.service.ts
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { CreateItem, EditIem, Item, ItemStatus } from './models/item';
-import { Observable } from 'rxjs';
+import { ENV_CONFIG } from '../env.config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ItemService {
 
-  readonly URL = 'http://localhost:3000/items';
-  private httpClient = inject(HttpClient)
+  // change to use envConfig
+  private envConfig = inject(ENV_CONFIG);
+  readonly URL = `${this.envConfig.apiUrl}/items`;
 
-  constructor() { }
+  private httpClient = inject(HttpClient);
 
-  list(): Observable<Item[]> {
+  constructor() {}
+
+  list() {
     return this.httpClient.get<Item[]>(this.URL);
   }
-  
+
   get(id: number) {
     return this.httpClient.get<Item>(`${this.URL}/${id}`)
   }
@@ -24,22 +28,20 @@ export class ItemService {
   add(item: CreateItem) {
     return this.httpClient.post<Item>(this.URL, item);
   }
-  
+
   edit(id: number, item: EditIem) {
     return this.httpClient.patch<Item>(`${this.URL}/${id}`, item);
   }
 
   delete(id: number) {
     return this.httpClient.delete<void>(`${this.URL}/${id}`);
-  }  
+  }
 
-  // TODO: temp update by front-end
   approve(id: number) {
-    return this.httpClient.patch<Item>(`${this.URL}/${id}`, { status: ItemStatus.APPROVED });
+    return this.httpClient.patch<Item>(`${this.URL}/${id}/approve`, null);
   }
 
   reject(id: number) {
-    return this.httpClient.patch<Item>(`${this.URL}/${id}`, { status: ItemStatus.REJECTED });
-  }  
-
+    return this.httpClient.patch<Item>(`${this.URL}/${id}/reject`, null);
+  }
 }

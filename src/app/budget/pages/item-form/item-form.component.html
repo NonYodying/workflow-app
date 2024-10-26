@@ -1,6 +1,5 @@
 <!-- item-form.component.html -->
 <h3 class="m-4">Item Entry / Add </h3>
-debug: {{ fg.value | json }}
 <hr />
 <div class="d-flex justify-content-center">
   <form class="w-50 needs-validation" [formGroup]="fg" (ngSubmit)="onSubmit()">
@@ -18,7 +17,7 @@ debug: {{ fg.value | json }}
       </div>
     </div>
     <div class="mt-3">
-      {{ amount.errors | json }}
+      <!-- {{ amount.errors | json }} -->
       <label class="form-label" for="amount">Amount</label>
       <input
         class="form-control"

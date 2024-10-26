@@ -5,6 +5,10 @@ import { JsonPipe, Location } from '@angular/common';
 import { thMobile } from '../../../shared/validators/th-mobile.validator';
 import { ItemService } from '../../item.service';
 import { ItemStatus } from '../../models/item';
+import { CanComponentDeactivate } from '../../../auth/guards/can-deactivate.guard';
+import { Observable } from 'rxjs';
+import { BsModalService, BsModalRef, ModalOptions } from 'ngx-bootstrap/modal';
+import { ConfirmModalComponent } from '../../../shared/components/confirm-modal/confirm-modal.component';
 
 @Component({
   selector: 'app-item-form',
@@ -13,7 +17,7 @@ import { ItemStatus } from '../../models/item';
   templateUrl: './item-form.component.html',
   styleUrl: './item-form.component.scss'
 })
-export class ItemFormComponent implements OnInit {
+export class ItemFormComponent implements OnInit, CanComponentDeactivate {
 
   // add
   @Input()
@@ -39,14 +43,17 @@ export class ItemFormComponent implements OnInit {
     price: this.price
   })
 
+  // add 
+  modalService = inject(BsModalService)
+  bsModalRef?: BsModalRef;
+
   ngOnInit() {
     console.log('id', this.id) // ???
     if (this.id) {
       this.itemService.get(this.id).subscribe(v => this.fg.patchValue(v))
     }
   }
-
-  
+    
   onBack(): void {
     this.location.back();
   }
@@ -58,5 +65,29 @@ export class ItemFormComponent implements OnInit {
     } else {
       this.itemService.add(item).subscribe(() => this.onBack())
     }
+  }
+
+  canDeactivate(): boolean | Observable<boolean> {
+    // check is dirty-form
+    const isFormDirty = this.fg.dirty
+    console.log('isFormDirty', isFormDirty)
+    if (!isFormDirty) {
+      return true;
+    }
+
+    // init comfirm modal
+    const initialState: ModalOptions = {
+      initialState: {
+        title: `Confirm to leave" ?`
+      }
+    };
+    this.bsModalRef = this.modalService.show(ConfirmModalComponent, initialState);
+
+    return new Observable<boolean>((observer) => {
+      this.bsModalRef?.onHidden?.subscribe(() => {
+        observer.next(this.bsModalRef?.content?.confirmed);
+        observer.complete()
+      })  
+    })
   }
 }

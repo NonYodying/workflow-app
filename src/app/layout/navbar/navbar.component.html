@@ -1,11 +1,11 @@
 <!-- navbar.component.html -->
 <nav class="navbar navbar-expand-md bg-light">
   <div class="container-fluid">
-    <a class="navbar-brand d-flex align-items-center" routerLink="/">
+    <a class="navbar-brand  d-flex align-items-center" routerLink="/">
       <img src="logo.svg" alt="logo" width="60" height="48">
-      <span>Budget App</span>
+      <span>Workflow App</span>
     </a>
-    <div>
+    <div class="navbar-collapse">
       <ul class="navbar-nav">
         @for (menu of menus; track menu.path) {
           <li class="nav-item">
@@ -14,5 +14,20 @@
         }
       </ul>
     </div>
+    <!-- add -->
+    @if (authService.loggedInUser; as loggedInUser) {
+      <span class="navbar-text">
+        <span>{{ loggedInUser.userProfile.username }}</span>
+        |
+        <i class="bi bi-box-arrow-in-right align-middle text-primary" (click)="onLogout()"></i>
+      </span>
+    } @else {
+      <button class="btn btn-outline-primary me-2" type="button" routerLink="/auth/login">
+        Login
+      </button>
+      <button class="btn btn-outline-primary ms-2" type="button" (click)="onKeycloakLogin()">
+        Login by Keycloak
+      </button>      
+    }    
   </div>
 </nav>
